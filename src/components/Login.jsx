@@ -8,22 +8,28 @@ import { BASE_URL } from "../utils/constants";
 const Login = () => {
   const [emailId, setEmail] = useState("panidapuajay44@gmail.com");
   const [password, setPassword] = useState("Chowdary@220");
+  const [error, setError] = useState("");
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const handleSend = async () => {
-    const res = await axios.post(
-      BASE_URL + "/login",
-      {
-        emailId,
-        password,
-      },
-      { withCredentials: true },
-      // I am logging with credentials so send cookie to browser,and brow to server to verify token
-    );
-    dispatch(addUser(res.data));
-    navigate("/feed");
+    try {
+      const res = await axios.post(
+        BASE_URL + "/login",
+        {
+          emailId,
+          password,
+        },
+        { withCredentials: true },
+        // I am logging with credentials so send cookie to browser,and brow to server to verify token
+      );
+      dispatch(addUser(res.data));
+      navigate("/feed");
+    } catch (err) {
+      console.log(err);
+      setError(err?.response?.data);
+    }
   };
 
   const handleEmail = (e) => {
@@ -59,6 +65,7 @@ const Login = () => {
               />
             </fieldset>
           </div>
+          <p className="text-red-500">{error}</p>
           <div className="card-actions justify-center">
             <button className="btn btn-primary" onClick={handleSend}>
               Send
